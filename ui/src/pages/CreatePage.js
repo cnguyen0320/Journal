@@ -27,10 +27,14 @@ function CreatePage(){
             // date needs to be converted for the input and also for the object
             document.getElementById("entry_date").value = new Date(entry.date).toISOString().substring(0,19)
             entry.date = Date.parse(document.getElementById("entry_date").value)
-            console.log(entry.date)
 
             setEntryMode(false)
-        }catch(err){}
+        }catch(err){
+            // this is a new entry
+            let datenow = new Date()
+            document.getElementById("entry_date").value = new Date(Date.parse(datenow) - datenow.getTimezoneOffset() * 60000).toISOString().substring(0,19) 
+
+        }
     })
 
     /**
