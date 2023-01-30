@@ -14,7 +14,7 @@ function App() {
       <Router>
         <Routes>
           <Route path="/" element={<HomePage/>}></Route>
-          <Route path="/create" element={<CreatePage/>}></Route>
+          <Route path="/entry" element={<CreatePage/>}></Route>
           <Route path="/viewEntry" element={<ViewEntryPage/>}></Route>
         </Routes>
       </Router>

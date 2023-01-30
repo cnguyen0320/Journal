@@ -1,7 +1,10 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
-import {useEffect} from 'react'
-import { useState } from "react";
+import {useEffect, useState} from 'react'
+import {useNavigate, useLocation} from "react-router-dom"
+import Button from 'react-bootstrap/Button';
+import Form from 'react-bootstrap/Form';
+import InputGroup from 'react-bootstrap/InputGroup';
+import PromptModal from "../components/PromptModal";
 
 
 function CreatePage(){
@@ -9,40 +12,59 @@ function CreatePage(){
     const navigate = useNavigate()
 
     // use states title and body
-    const [entry_title, setTitle] = useState("")
-    const [entry_body, setBody] = useState("")
-    const [entry_date, setDate] = useState(new Date())
+    const location = useLocation()
+    const [modalShow, setModalShow] = useState(false);
+    const [entry_mode, setEntryMode] = useState(true)
+
+    let entry = {title:"", body:"", date:""}
+    useEffect(()=>{
+        try{
+            entry = location.state.entry
+
+            document.getElementById("entry_title").value = entry.title
+            document.getElementById("entry_body").value = entry.body
+            
+            // date needs to be converted for the input and also for the object
+            document.getElementById("entry_date").value = new Date(entry.date).toISOString().substring(0,19)
+            entry.date = Date.parse(document.getElementById("entry_date").value)
+            console.log(entry.date)
+
+            setEntryMode(false)
+        }catch(err){}
+    })
 
     /**
      * on Submission, we will send a POST to the server with the contents
      */
     const onSubmit = () =>{
-        console.log(entry_date)
-        fetch("/entries", {
-            method: "POST",
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                title: entry_title,
-                body: entry_body,
-                date: entry_date
 
-                // TODO add more
+            fetch("/entries", {
+                method: entry_mode ? "POST" : "PUT",
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    title: entry.title,
+                    body: entry.body,
+                    date: entry.date,
+                    _id: entry._id ? entry._id : undefined
+
+                    // TODO add more
+                })
             })
-        })
-        .then(
-            response =>{
-                if(response.status >= 200 && response.status <300){
-                    // TODO
-                    navHome() // navigate home after completion
-                }else{
-                    console.log(response)
-                    alert("An error occurred saving your entry. Please try again")
+            .then(
+                response =>{
+                    if(response.status >= 200 && response.status <300){
+                        // TODO
+                        navHome() // navigate home after completion
+                    }else{
+                        console.log(response)
+                        alert("An error occurred saving your entry. Please try again")
+                    }
                 }
-            }
-        )
+            )
+        
     }
 
     /**
@@ -52,27 +74,39 @@ function CreatePage(){
         navigate("/")
     }
 
+    const setBody = (val)=>{
+        entry.body = val
+    }
+
+    const setDate = (val)=>{
+        entry.date = val
+    }
+
+    const setTitle = (val)=>{
+        entry.title = val
+    }
+
     return (
         
 
     <div className="container text-start">
-        <h1 className="mb-5">New Entry</h1>
-
+        <h1 className="mb-5">{entry_mode ? "New Entry" : "Modify Entry"}</h1>
+        {modalShow}
         <div>
             <div className="my-3">
-                <label for="entry_title">Title</label>
-                <input 
-                id="entry_title"
-                className="form-control"
-                onChange={e =>{
-                    setTitle(e.target.value)
-                }}
-                />
+                
+            <InputGroup className="mb-3">
+            <InputGroup.Text className="fs-4">Title</InputGroup.Text>
+                    <Form.Control id="entry_title" onChange={e =>{setTitle(e.target.value)}}/>
+                    <Button variant="secondary" onClick={()=>{setModalShow(true)}}>
+                        Stuck?
+                    </Button>
+            </InputGroup>
 
-                <label for="entry_date">Date</label>
-                <input id="entry_date" type="date" onChange={e =>{
-                    setDate(Date.parse(e.target.value))
-                }}/>
+                <input id="entry_date" type="datetime-local" onChange={e =>{
+                    setDate(Date.parse(e.target.value) - new Date().getTimezoneOffset() * 60000) // need to modify the time to set time in database in local time
+                }}
+                                />
             </div>
 
             <div className="my-3">
@@ -89,23 +123,28 @@ function CreatePage(){
         {/* Buttons */}
         <div className="my-4">
 
-            <button 
-            className="btn btn-outline-primary mx-1"
+        <Button 
+            className = "mx-1"
+            variant="primary"
             onClick={e=>{
                 onSubmit()
             }}
             >
                 Submit
-            </button>
+            </Button>
 
-            <button 
-            className="btn btn-outline-secondary mx-1"
+            <Button 
+            className = "mx-1"
+            variant="secondary"
             onClick={e=>{
                 navHome()
-            }}>Cancel</button>
+            }}>Cancel</Button>
         </div>
+    
+    <PromptModal show={modalShow} onHide={()=>{setModalShow(false)}}></PromptModal>
             
     </div>
+
 )
 }
 

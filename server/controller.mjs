@@ -27,7 +27,7 @@ const validate_body = (body) =>{
  * GET Request to retrieve entries
  */
 app.get("/entries", asyncHandler(async (req,res) =>{
-    const result = await model.getEntry({
+    const result = await model.get({
         // TODO filters
     },
     {
@@ -41,7 +41,7 @@ app.get("/entries", asyncHandler(async (req,res) =>{
 }))
 
 app.get("/entries/total", asyncHandler(async(req,res)=>{
-    const result = await model.countOfQueries({
+    const result = await model.countOfDocuments({
         // TODO filters
     })
     console.log(result)
@@ -64,7 +64,7 @@ app.post("/entries", asyncHandler(async (req,res)=>{
         validate_body(requestbody)
         console.log(requestbody)
         // create the entry
-        let result = await model.createEntry(requestbody)
+        let result = await model.create(requestbody)
 
         console.log(result)
         // return 201 and return the resulting entry
@@ -80,8 +80,36 @@ app.post("/entries", asyncHandler(async (req,res)=>{
  * PUT Request to update an entry
  */
 app.put("/entries", asyncHandler(async(req,res)=>{
-    // TODO
-    return res.status(200)
+    res.setHeader('content-type', 'application/json');
+
+    try{
+        // validate
+        validate_body(req.body)
+
+        // filter to find the exercise
+        let filter = {_id: req.body._id}
+
+        // make request to DB to update exercise
+        await model.update(filter, req.body)
+
+        // retrieve exercises to get the updated row
+        let result = await model.get(filter)
+
+        // return the result of change
+        if(result.length > 0){
+            res.status(200).send(result[0])   
+        }
+        
+        // not found
+        else{
+            res.status(404).send({ Error: "Not found"})
+        }
+
+
+    }catch(e){
+        res.status(400).send({ Error: "Invalid request"})
+    }
+
 }))
 
 /**
@@ -96,6 +124,24 @@ app.delete("/entries/:_id", asyncHandler(async(req,res)=>{
 
     // delete exercises using filter
     let result = await model.deleteEntry(filter)
+
+    // if delete occurred, send 204
+    if(result.deletedCount > 0){
+        return res.status(204).send()
+    }else{
+        res.setHeader('content-type', 'application/json');
+        res.status(404).send({ Error: "Not found"})
+    }
+
+}))
+
+app.delete("/all", asyncHandler(async(req,res)=>{
+    
+    // generate filter based on query argument
+    let filter = {}
+
+    // delete exercises using filter
+    let result = await model.deleteMany(filter)
 
     // if delete occurred, send 204
     if(result.deletedCount > 0){

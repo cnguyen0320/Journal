@@ -39,3 +39,13 @@
   overflow: hidden;
   max-width: 90%;
 }
+
+#entry_body{
+  height:25%
+}
+
+details {
+  border: 1px solid #aaa;
+  border-radius: 4px;
+  padding: 0.5em 0.5em 0;
+}

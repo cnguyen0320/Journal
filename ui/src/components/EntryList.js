@@ -6,7 +6,7 @@ function EntryList({entries}){
     // TODO
     return (
         <ListGroup>
-            {entries.map((entry) => <EntryListItem key={entry.key} entry={entry}></EntryListItem>)}
+            {entries.map((entry) => <EntryListItem key={entry._id} entry={entry}></EntryListItem>)}
         </ListGroup>
     )
 }

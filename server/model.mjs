@@ -32,12 +32,12 @@ const Entry = mongoose.model("Entry", entrySchema)
  * @param {Object} filter filters the query
  * @returns Array of Objects matching the filter
  */
-const getEntry = async(filter={}, options={}) =>{
+const get = async(filter={}, options={}) =>{
     const query = Entry.find(filter).skip(options.offset).sort('-date').limit(options.limit)
     return query.exec()
 }
 
-const countOfQueries = async(filter) =>{
+const countOfDocuments = async(filter) =>{
     const query = await Entry.countDocuments(filter)
     return {count: query}
 }
@@ -47,7 +47,7 @@ const countOfQueries = async(filter) =>{
  * @param {Object} entry 
  * @returns 
  */
-const createEntry = async(entry) =>{
+const create = async(entry) =>{
     const query = new Entry(entry)
     return query.save()
 }
@@ -57,8 +57,10 @@ const createEntry = async(entry) =>{
  * @param {String} filter
  * @param {Object} updates the object of updates for the Entry
  */
-const updateEntry = async(filter, updates) =>{
-    // TODO
+const update = async(filter, updates) =>{
+    // update the part
+    const result = await Entry.updateOne(filter,updates)
+    return result
 }
 
 /**
@@ -72,4 +74,11 @@ const deleteEntry = async(filter) =>{
     return {deletedCount: result.deletedCount}
 }
 
-export {getEntry, countOfQueries,createEntry, updateEntry, deleteEntry}
+const deleteMany = async(filter) =>{
+    const result = await Entry.deleteMany(filter)
+
+    // reform the result to send back
+    return {deletedCount: result.deletedCount}
+}
+
+export {get, countOfDocuments,create, update, deleteEntry, deleteMany}
