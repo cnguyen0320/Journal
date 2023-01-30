@@ -1,0 +1,75 @@
+import React from 'react'
+import {useState, useEffect} from 'react'
+import { useNavigate } from 'react-router-dom';
+import ListView from '../components/ListView'
+import Button from 'react-bootstrap/Button';
+
+
+
+const ENTRIES_PER_PAGE = 5
+
+function HomePage(){
+    
+    const navigate = useNavigate()
+
+    // entries will be a state of the home page
+    
+    const [total_entries, setTotalEntries] = useState(0)
+    const [page, setPage] = useState(0)
+    const [max_page, setMaxPage] = useState(0)
+
+    // only load entries on initial load
+    useEffect(() =>{
+        let result = fetch("/entries/total",{
+            method: "GET"
+        })
+        .then(result => result.json())
+        .then(result => {
+            setTotalEntries(result.count)
+            setMaxPage(Math.floor(total_entries/ENTRIES_PER_PAGE))
+        })
+    })
+
+    
+
+    const createEntry = () =>{
+        navigate("/create")
+    }
+
+    const increment_page = () =>{
+        const new_page = Math.min(page+1, max_page)
+        setPage(new_page)
+
+    }
+
+    const decrement_page = () =>{
+        const new_page = Math.max(0, page-1)
+        setPage(new_page)
+
+    }
+
+    return (
+        <div className="container text-start">
+            My Journal {page} {max_page}
+            <div className="d-flex justify-content-end align-items-start my-2">                
+
+                <Button onClick={createEntry} bg="primary">Create New</Button>
+            </div>
+            <ListView page= {page}></ListView>
+            
+            <div className="d-flex justify-content-between align-items-start my-2">                
+                    { page > 0 ? 
+                        <Button onClick={decrement_page} bg="secondary">Prev</Button> : <span></span>
+                    }
+                    { page < max_page ?
+                        <Button className="ms-2" onClick={increment_page} bg="secondary">Next</Button> : <span></span>
+                    }
+            </div>
+
+
+
+        </div>
+    )
+}
+
+export default HomePage;

@@ -32,9 +32,14 @@ const Entry = mongoose.model("Entry", entrySchema)
  * @param {Object} filter filters the query
  * @returns Array of Objects matching the filter
  */
-const getEntry = async(filter) =>{
-    const query = Entry.find(filter)
+const getEntry = async(filter={}, options={}) =>{
+    const query = Entry.find(filter).skip(options.offset).sort('-date').limit(options.limit)
     return query.exec()
+}
+
+const countOfQueries = async(filter) =>{
+    const query = await Entry.countDocuments(filter)
+    return {count: query}
 }
 
 /**
@@ -67,4 +72,4 @@ const deleteEntry = async(filter) =>{
     return {deletedCount: result.deletedCount}
 }
 
-export {getEntry, createEntry, updateEntry, deleteEntry}
+export {getEntry, countOfQueries,createEntry, updateEntry, deleteEntry}

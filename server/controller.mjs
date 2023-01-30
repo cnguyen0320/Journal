@@ -1,5 +1,5 @@
 import 'dotenv/config';
-import express from 'express';
+import express, { query } from 'express';
 import asyncHandler from 'express-async-handler';
 import * as model from "./model.mjs"
 
@@ -17,6 +17,7 @@ const validate_body = (body) =>{
         throw Error("Invalid body")
     } 
     if(!Number.isInteger(body.date)){
+        console.log(body.date)
         throw Error("Invalid date")
     }
     // ignore type of tags array
@@ -28,7 +29,22 @@ const validate_body = (body) =>{
 app.get("/entries", asyncHandler(async (req,res) =>{
     const result = await model.getEntry({
         // TODO filters
+    },
+    {
+        offset: req.query.offset ? req.query.offset : 0,
+        limit: req.query.limit ? req.query.limit : 100
     })
+
+    // send response
+    res.setHeader('content-type', 'application/json');
+    res.status(200).send(result)
+}))
+
+app.get("/entries/total", asyncHandler(async(req,res)=>{
+    const result = await model.countOfQueries({
+        // TODO filters
+    })
+    console.log(result)
 
     // send response
     res.setHeader('content-type', 'application/json');
@@ -46,10 +62,11 @@ app.post("/entries", asyncHandler(async (req,res)=>{
         let requestbody = req.body
 
         validate_body(requestbody)
-
+        console.log(requestbody)
         // create the entry
         let result = await model.createEntry(requestbody)
 
+        console.log(result)
         // return 201 and return the resulting entry
         res.status(201).send(result)
     }catch(error){

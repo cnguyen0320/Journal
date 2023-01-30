@@ -1,0 +1,41 @@
+.App {
+  text-align: center;
+  
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.App-header {
+  
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+.list_item_date{
+  min-width: 25%;
+}
+
+.list_item_title{
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.list_item_content{
+  min-width: 75%;
+}
+
+.body-preview{
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  max-width: 90%;
+}
