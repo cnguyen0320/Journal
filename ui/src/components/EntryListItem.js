@@ -20,7 +20,7 @@ function EntryListItem({entry}){
             <div className="body-preview fw-light fs-4">{entry.body}</div>
         </div>
         
-        <span className="list_item_date fs-5">{new Date(entry.date).toDateString()}</span>
+        <span className="list_item_date fs-5 text-end">{new Date(entry.date).toDateString()}</span>
         
     </ListGroup.Item>
 )

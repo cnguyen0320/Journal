@@ -8,9 +8,11 @@ import ViewEntryPage from './pages/ViewEntryPage';
 function App() {
   return (
     <div className="App">
-      <header className="App-header">
-        
+      <header className="App-header container fs-1 fw-bold">
+        My Journal
+        <hr></hr>
       </header>
+      
       <Router>
         <Routes>
           <Route path="/" element={<HomePage/>}></Route>

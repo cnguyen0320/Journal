@@ -55,7 +55,6 @@ function HomePage(){
 
     return (
         <div className="container text-start">
-            My Journal
             { 
             has_data ? 
             total_entries == 0 ?

@@ -6,7 +6,7 @@ import Card from 'react-bootstrap/Card';
 function BeginningScreen({entries}){
     const navigate = useNavigate()
     const createEntry = () =>{
-        navigate("/create")
+        navigate("/entry")
     }
 
     return (

@@ -5,7 +5,7 @@ import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import InputGroup from 'react-bootstrap/InputGroup';
 import PromptModal from "../components/PromptModal";
-
+import { Tooltip } from 'react-tooltip'
 
 function CreatePage(){
 
@@ -33,6 +33,8 @@ function CreatePage(){
             // this is a new entry
             let datenow = new Date()
             document.getElementById("entry_date").value = new Date(Date.parse(datenow) - datenow.getTimezoneOffset() * 60000).toISOString().substring(0,19) 
+
+            entry.date = Date.parse(document.getElementById("entry_date").value) - new Date().getTimezoneOffset() * 60000
 
         }
     })
@@ -94,7 +96,7 @@ function CreatePage(){
         
 
     <div className="container text-start">
-        <h1 className="mb-5">{entry_mode ? "New Entry" : "Modify Entry"}</h1>
+        <h1 className="mb-5 fs-3">{entry_mode ? "New Entry" : "Modify Entry"}</h1>
         {modalShow}
         <div>
             <div className="my-3">
@@ -102,25 +104,32 @@ function CreatePage(){
             <InputGroup className="mb-3">
             <InputGroup.Text className="fs-4">Title</InputGroup.Text>
                     <Form.Control id="entry_title" onChange={e =>{setTitle(e.target.value)}}/>
-                    <Button variant="secondary" onClick={()=>{setModalShow(true)}}>
+                    <Button id="prompt_button" variant="secondary" onClick={()=>{setModalShow(true)}} data-tooltip-content="Get some ideas!">
                         Stuck?
                     </Button>
+                    <Tooltip anchorId="prompt_button" />
+                    
             </InputGroup>
+            <InputGroup className="">
+            <InputGroup.Text className="fs-4">Date</InputGroup.Text>
 
-                <input id="entry_date" type="datetime-local" onChange={e =>{
+                <Form.Control id="entry_date" type="datetime-local" className="fs-5" onChange={e =>{
                     setDate(Date.parse(e.target.value) - new Date().getTimezoneOffset() * 60000) // need to modify the time to set time in database in local time
-                }}
-                                />
+                }}/>
+            </InputGroup>
             </div>
 
-            <div className="my-3">
-                <label for="entry_body">Body</label>
+            <div class="form-floating my-3">
                 <textarea 
+                rows="20"
                 id="entry_body"
-                className="form-control"
+                className="form-control pt-5"
+                placeholder="Body"
                 onChange={e =>{
                     setBody(e.target.value)
                 }}></textarea>
+                <label className="text-secondary fs-5" for="entry_body">Tell me about it!</label>
+
             </div>
         </div>
 

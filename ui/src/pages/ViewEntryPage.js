@@ -4,7 +4,8 @@ import {useNavigate, useLocation} from "react-router-dom"
 import Button from 'react-bootstrap/Button';
 import ButtonGroup from 'react-bootstrap/ButtonGroup';
 import ConfirmModal from "../components/ConfirmModal";
-
+import Breadcrumb from 'react-bootstrap/Breadcrumb';
+import Card from 'react-bootstrap/Card';
 
 
 function ViewEntryPage(){
@@ -45,38 +46,43 @@ function ViewEntryPage(){
 
     return (
         <div className="container text-start">
-            <span className="d-flex justify-content-between align-items-start my-2">
-                <h3>{entry.title}</h3>
-                <span>{new Date(entry.date).toLocaleDateString()}</span>
-            </span>
-            <hr></hr>
-            <div>{entry.body}</div>
-            
-            <div className="d-flex justify-content-between align-items-start my-2">
-                <Button variant="secondary"
-                onClick={navHome}>
-                    Back
-                </Button>
+            <Card classsName="text-black">
+            <Card.Header>
+                <span className="d-flex justify-content-between align-items-start my-2">
+                    <h1>{entry.title}</h1>
+                    <span className="fs-4">{new Date(entry.date).toLocaleDateString()}</span>
+                </span>
+            </Card.Header>
+            <Card.Body className="view_body">
+                <Card.Text className="fs-4">{entry.body}</Card.Text>
+            </Card.Body>       
+                
+                <Card.Footer className="d-flex justify-content-between align-items-end">
+                    <Button variant="secondary"
+                    onClick={navHome}>
+                        Back
+                    </Button>
 
-                <div>
-                {advancedView ? 
-                        <ButtonGroup>
-                            <Button  className="px-4" variant="warning" onClick={onEdit}>
-                                Edit
-                            </Button>
-                            <Button  variant="danger" onClick={()=>{setModalShow(true)}}>
-                                Delete
-                            </Button>
-                        </ButtonGroup>
-                        : null
-                    }
-                <Button className="ms-3" variant="outline-secondary" onClick={toggleAdvancedView}>
-                    {advancedView ? "Less": "More"}
-                </Button>
-                </div>
-            </div>            
-            
-        <ConfirmModal title="Delete Entry" show={modalShow} confirm={deleteEntry} onHide={()=>{setModalShow(false)}}></ConfirmModal>
+                    <div>
+                    {advancedView ? 
+                            <ButtonGroup>
+                                <Button  className="px-4" variant="warning" onClick={onEdit}>
+                                    Edit
+                                </Button>
+                                <Button  variant="danger" onClick={()=>{setModalShow(true)}}>
+                                    Delete
+                                </Button>
+                            </ButtonGroup>
+                            : null
+                        }
+                    <Button className="ms-3" variant="outline-secondary" onClick={toggleAdvancedView}>
+                        {advancedView ? "Less": "More"}
+                    </Button>
+                    </div>
+                
+                </Card.Footer>
+            </Card>
+            <ConfirmModal title="Delete Entry" show={modalShow} confirm={deleteEntry} onHide={()=>{setModalShow(false)}}></ConfirmModal>
 
         </div>
 

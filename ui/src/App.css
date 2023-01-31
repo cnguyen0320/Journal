@@ -12,11 +12,21 @@
 }
 
 .App-header {
-  
+  width: 100%;
+  text-align: left;
+  align-items: left;
 }
 
 .App-link {
   color: #61dafb;
+}
+
+.card{
+  color: black
+}
+
+.view_body{
+  min-height:20vh;
 }
 
 .list_item_date{
