@@ -1,6 +1,7 @@
 import 'dotenv/config';
 import express, { query } from 'express';
 import asyncHandler from 'express-async-handler';
+import fetch from 'node-fetch';
 import * as model from "./model.mjs"
 
 const PORT = process.env.PORT;
@@ -150,6 +151,16 @@ app.delete("/all", asyncHandler(async(req,res)=>{
         res.setHeader('content-type', 'application/json');
         res.status(404).send({ Error: "Not found"})
     }
+
+}))
+
+app.get("/randomprompt", asyncHandler(async(req,res) =>{
+
+    let response = await fetch("http://localhost:5000/inspire/random")
+    response = await response.json()
+    res.status(200).send(response[1])
+
+    
 
 }))
 
