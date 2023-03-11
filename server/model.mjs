@@ -19,7 +19,7 @@ const {Schema} = mongoose
 const entrySchema = mongoose.Schema({
     title : {type: String, required:true},
     body: {type: String, required:true},
-    date: {type: Date, required: true},
+    date: {type: String, required: true},
     tags: {type: Array, required: false}
 },
 {timestamps: true})
@@ -33,7 +33,7 @@ const Entry = mongoose.model("Entry", entrySchema)
  * @returns Array of Objects matching the filter
  */
 const get = async(filter={}, options={}) =>{
-    const query = Entry.find(filter).skip(options.offset).sort('-date').limit(options.limit)
+    const query = Entry.find(filter).skip(options.offset).sort(options.sort).limit(options.limit)
     return query.exec()
 }
 

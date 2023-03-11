@@ -9,6 +9,10 @@ const app = express();
 
 app.use(express.json({extended:true}))
 
+const isISODate = (str) => {
+    return /\d{4}-\d{2}-\d{2}/.test(str);
+}
+
 const validate_body = (body) =>{
     const keys = Object.keys(body)
     if(typeof body.title !== "string"){
@@ -17,8 +21,7 @@ const validate_body = (body) =>{
     if(typeof body.body !== "string"){
         throw Error("Invalid body")
     } 
-    if(!Number.isInteger(body.date)){
-        console.log(body.date)
+    if(!isISODate(body.date)){
         throw Error("Invalid date")
     }
     // ignore type of tags array
@@ -28,12 +31,27 @@ const validate_body = (body) =>{
  * GET Request to retrieve entries
  */
 app.get("/entries", asyncHandler(async (req,res) =>{
-    const result = await model.get({
-        // TODO filters
-    },
+    let filter = {}
+
+    // generate filter with text taking priority over date
+    if(req.query.text){
+        filter = {$or: [
+                {"title": { $regex: req.query.text, $options: "i"}},
+                {"body": { $regex: req.query.text, $options: "i"}},
+                {"tags": { $regex: req.query.text, $options: "i"}},
+                {"date": { $regex: req.query.text, $options: "i"}},
+            ]
+        }
+    }else if(req.query.date){
+        filter.date = { $regex: req.query.date, $options: "i"}
+    }
+
+    const result = await model.get(
+    filter,
     {
         offset: req.query.offset ? req.query.offset : 0,
-        limit: req.query.limit ? req.query.limit : 100
+        limit: req.query.limit ? req.query.limit : 100,
+        sort: req.query.sort ? req.query.sort : "-date"
     })
 
     // send response
